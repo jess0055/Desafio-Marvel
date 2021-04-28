@@ -12,7 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MarvelHQ"
         android:usesCleartextTraffic="true">
-        <activity android:name=".view.activity.ComicDetailsActivity"></activity>
+        <activity android:name=".view.activity.FullScreenImageActivity"></activity>
+        <activity android:name=".view.activity.ComicDetailsActivity" />
         <activity android:name=".view.activity.RegisterActivity" />
         <activity android:name=".view.activity.HomeActivity" />
         <activity android:name=".view.activity.LoginActivity" />
