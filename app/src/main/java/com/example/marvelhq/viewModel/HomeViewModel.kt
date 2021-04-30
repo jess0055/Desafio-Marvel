@@ -29,8 +29,17 @@ class HomeViewModel : ViewModel() {
 
         try {
             firstPageLoading.postValue(true)
+            val comicsFinal = mutableListOf<Result>()
             repository.getComicsService().let { comicsPage ->
-                comicsList.postValue(comicsPage.data.results)
+                val comics = comicsPage.data.results
+                val img = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available"
+
+                comics.forEach {
+                    if(it.thumbnail.path != img){
+                        comicsFinal.add(it)
+                    }
+                }
+                comicsList.postValue(comicsFinal)
                 updateNextPage(comicsPage)
             }
         }catch (error: Throwable){
@@ -41,14 +50,23 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun updateNextPage(comicsPage: ComicResponse) {
-        nextPage = comicsPage.data.offset.plus(1) ?: 1
+        nextPage = comicsPage.data.offset.plus(comicsPage.data.limit) ?: 1
     }
 
     fun requestNextPage() = CoroutineScope(IO).launch {
         try {
             nextPageLoading.postValue(true)
+            val comicsFinal = mutableListOf<Result>()
             repository.getComicsService(nextPage).let { comicsPage ->
-                comicsList.postValue(comicsPage.data.results)
+                val comics = comicsPage.data.results
+                val img = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available"
+
+                comics.forEach {
+                    if(it.thumbnail.path != img){
+                        comicsFinal.add(it)
+                    }
+                }
+                comicsList.postValue(comicsFinal)
                 updateNextPage(comicsPage)
             }
         } catch (error: Throwable) {

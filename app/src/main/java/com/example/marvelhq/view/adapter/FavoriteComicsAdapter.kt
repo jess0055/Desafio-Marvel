@@ -10,37 +10,32 @@ import com.example.marvelhq.R
 import com.example.marvelhq.model.Result
 import com.squareup.picasso.Picasso
 
-class HomeAdapter (val callback: (Result) -> Unit) :
-RecyclerView.Adapter<HomeAdapter.ComicsViewHolder>(){
+class FavoriteComicsAdapter(private val listFavComics: List<Result>, val callback: (Result) -> Unit) :
+    RecyclerView.Adapter<FavoriteComicsAdapter.FavComicsViewHolder>() {
 
-     private val comicList =  mutableListOf<Result>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeAdapter.ComicsViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteComicsAdapter.FavComicsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.comic_item, parent, false)
-        return ComicsViewHolder(view)
+        return FavComicsViewHolder(view)
     }
 
-    override fun getItemCount() = comicList.size
+    override fun getItemCount() = listFavComics.size
 
-    override fun onBindViewHolder(holder: ComicsViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: FavoriteComicsAdapter.FavComicsViewHolder, position: Int) {
 
-        val comic = comicList.elementAt(position)
+        val comic = listFavComics.elementAt(position)
         val imageURL = comic.thumbnail.path + ".jpg"
         Picasso.get().load(imageURL).into(holder.image)
-        holder.numberComic.append(comic.issueNumber)
+        holder.numberComic.text = comic.issueNumber
 
         holder.itemView.setOnClickListener {
             callback(comic)
         }
     }
 
-    fun addComics(comics: List<Result>){
-        comicList.addAll(comics)
-        notifyDataSetChanged()
-    }
-
-    inner class ComicsViewHolder(view : View) : RecyclerView.ViewHolder(view){
+    inner class FavComicsViewHolder(view : View) : RecyclerView.ViewHolder(view){
         val image: ImageView = view.findViewById(R.id.image_comic)
         val numberComic: TextView = view.findViewById(R.id.number_comic)
     }
+
 }

@@ -7,6 +7,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
 import android.widget.Toast
+import android.widget.Button
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,12 +22,11 @@ import java.io.Serializable
 class HomeActivity : AppCompatActivity() {
 
 
-    val recycler by lazy { findViewById<RecyclerView>(R.id.recycler_view)}
-    val viewModelHome by lazy { ViewModelProviders.of(this).get(HomeViewModel::class.java)}
-
+    private val recycler by lazy { findViewById<RecyclerView>(R.id.recycler_view)}
+    private val viewModelHome by lazy { ViewModelProviders.of(this).get(HomeViewModel::class.java)}
     private val nextPageLoading by lazy { findViewById<ProgressBar>(R.id.nextLoading) }
     private val firstPageLoading by lazy { findViewById<ProgressBar>(R.id.firstLoading) }
-
+    private val btnFav by lazy { findViewById<Button>(R.id.btn_fav) }
     lateinit var adapter: HomeAdapter
 
     private val recyclerScrollListener by lazy {
@@ -39,22 +39,24 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        //config recycler
-        adapter = HomeAdapter { comic->
-            navigateToComicDetails(comic)
+
+        configRecycler()
+
+        configLoading()
+
+        showErrorMessage()
+
+        configClicks()
+    }
+
+    private fun configClicks() {
+        btnFav.setOnClickListener {
+            val intent = Intent(this, FavoriteComicsActivity::class.java)
+            startActivity(intent)
         }
+    }
 
-        recycler.adapter = adapter
-        val layoutManager = GridLayoutManager(this, 3)
-        recycler.layoutManager = layoutManager
-
-        recycler.addOnScrollListener(recyclerScrollListener)
-
-        viewModelHome.comicsList.observe(this) { comics ->
-            setRequestingNextPage()
-            adapter.addComics(comics)
-        }
-
+    private fun configLoading() {
         viewModelHome.nextPageLoading.observe(this) {
             if (it) {
                 nextPageLoading.visibility = VISIBLE
@@ -70,9 +72,23 @@ class HomeActivity : AppCompatActivity() {
                 firstPageLoading.visibility = GONE
             }
         }
+    }
 
-        showErrorMessage()
+    private fun configRecycler() {
+        adapter = HomeAdapter { comic ->
+            navigateToComicDetails(comic)
+        }
 
+        recycler.adapter = adapter
+        val layoutManager = GridLayoutManager(this, 3)
+        recycler.layoutManager = layoutManager
+
+        recycler.addOnScrollListener(recyclerScrollListener)
+
+        viewModelHome.comicsList.observe(this) { comics ->
+            setRequestingNextPage()
+            adapter.addComics(comics)
+        }
     }
 
     private fun navigateToComicDetails(comic: Result) {

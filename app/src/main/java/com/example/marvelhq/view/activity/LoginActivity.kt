@@ -4,7 +4,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.lifecycle.ViewModelProviders
 import com.example.marvelhq.R
+import com.example.marvelhq.viewModel.LoginViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -17,46 +19,63 @@ class LoginActivity : AppCompatActivity() {
     private val btnLogin by lazy { findViewById<Button>(R.id.btn_login) }
     private val btnRegister by lazy { findViewById<Button>(R.id.btn_create_account) }
 
+    private val viewModelLogin by lazy { ViewModelProviders.of(this).get(LoginViewModel::class.java)}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        configureValidationOfFields()
+        configClicks()
+
+//        btnRegister.setOnClickListener {
+//            val intent = Intent(this, RegisterActivity::class.java)
+//            startActivity(intent)
+//        }
+    }
+
+    private fun configClicks() {
         btnLogin.setOnClickListener {
-            if (validateLogin()){
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
-        btnRegister.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+            login()
         }
     }
 
-    private fun validateLogin() : Boolean{
-
-        val email = editEmail?.text.toString()
-        val password = editPassword?.text.toString()
-        var login = false
-
-        when {
-
-            email.isBlank() -> {
-                textEmail?.error = "Email is required"
-                textPassword?.error = null
+    private fun configureValidationOfFields() {
+        viewModelLogin.fieldEmail.observe(this) { emailValid ->
+            if (emailValid) {
+                textEmail.error = null
+            } else {
+                textEmail.error = "Email is required"
             }
 
-            password.isBlank() -> {
-                textEmail?.error = null
-                textPassword?.error = "Password is required"
-            }
-            else -> {
-                textEmail?.error = null
-                textPassword?.error = null
-                login = true
-            }
+            navigateIfValid()
         }
-        return login
+
+        viewModelLogin.fieldPassword.observe(this) { passValid ->
+            if (passValid) {
+                textPassword.error = null
+            } else {
+                textPassword.error = "Passoword is required"
+            }
+
+            navigateIfValid()
+        }
+    }
+
+    private fun navigateIfValid() {
+        if (viewModelLogin.fieldEmail.value == true
+            && viewModelLogin.fieldPassword.value == true
+        ) {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+    }
+
+    private fun login() {
+        val email = editEmail.text.toString()
+        val password = editPassword.text.toString()
+
+        viewModelLogin.validateEntryFiels(email, password)
     }
 }

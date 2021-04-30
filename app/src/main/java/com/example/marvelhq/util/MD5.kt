@@ -1,4 +1,4 @@
-package com.example.marvelhq
+package com.example.marvelhq.util
 
 import okhttp3.internal.and
 import java.security.MessageDigest

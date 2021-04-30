@@ -14,7 +14,7 @@ data class Result(
     val ean: String,
     val events: Events,
     val format: String,
-    val id: String,
+    val id: Int,
     val images: List<Image>,
     val isbn: String,
     val issn: String,
