@@ -49,15 +49,6 @@ class FavoriteComicsActivity : AppCompatActivity() {
     }
 
     private fun initRecycler() {
-//        viewModel.favComicsLiveData.observe(this) { comicList ->
-//            val adapter = FavoriteComicsAdapter(comicList){ comic->
-//                navigateToComicDetails(comic)
-//            }
-//            recycler.adapter = adapter
-//            val layoutManager = GridLayoutManager(this, 3)
-//            recycler.layoutManager = layoutManager
-//        }
-
 
         adapter = FavoriteComicsAdapter(){ comic->
             navigateToComicDetails(comic)

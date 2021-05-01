@@ -31,7 +31,7 @@ class FavoriteViewModel : ViewModel() {
             val comics = database.comicsDao().getAll()
             listFavs.add(comics)
             getIDs()
-            getComic()
+//            getComic()
         }
     }
 
@@ -43,23 +43,23 @@ class FavoriteViewModel : ViewModel() {
         }
     }
 
-    private fun getComic() = CoroutineScope(IO).launch {
-        loading.postValue(true)
-        try {
-            listIds.forEach { idComic ->
-                repository.getComicByIdService(idComic).let { result ->
-                    result.data.results.forEach {
-                        listResults.add(it)
-                    }
-                }
-            }
-            favComicsLiveData.postValue(listResults)
-        } catch (error: Throwable) {
-            handleError(error)
-        } finally {
-            loading.postValue(false)
-        }
-    }
+//    private fun getComic() = CoroutineScope(IO).launch {
+//        loading.postValue(true)
+//        try {
+//            listIds.forEach { idComic ->
+//                repository.getComicByIdService(idComic).let { result ->
+//                    result.data.results.forEach {
+//                        listResults.add(it)
+//                    }
+//                }
+//            }
+//            favComicsLiveData.postValue(listResults)
+//        } catch (error: Throwable) {
+//            handleError(error)
+//        } finally {
+//            loading.postValue(false)
+//        }
+//    }
 
     private fun handleError(error: Throwable) {
         when (error) {
