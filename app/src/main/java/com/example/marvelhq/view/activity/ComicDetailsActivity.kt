@@ -1,9 +1,11 @@
 package com.example.marvelhq.view.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.example.marvelhq.R
@@ -53,13 +55,12 @@ class ComicDetailsActivity : AppCompatActivity() {
         configImages()
         configTexts()
         configClicks()
-        isFavorite()
     }
 
     private fun configClicks() {
         imageComic.setOnClickListener {
             val intent = Intent(this, FullScreenImageActivity::class.java)
-            intent.putExtra("image", comic.images[0].path + ".jpg")
+            intent.putExtra("image", comic.thumbnail.path + ".jpg")
             startActivity(intent)
         }
 
@@ -77,14 +78,6 @@ class ComicDetailsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Removed from favorites", Toast.LENGTH_SHORT).show()
                 deleteComic(comic.id)
             }
-        }
-    }
-
-    private fun isFavorite() {
-        val comic = findComic(comic.id)
-        if (comic != null) {
-            btnFavorite.isChecked = true
-            showAsFavorite()
         }
     }
 
@@ -110,7 +103,7 @@ class ComicDetailsActivity : AppCompatActivity() {
         textTitle.text = comic.title
 
         textDesc.text = comic.description
-        textPages.text = comic.pageCount
+        textPages.text = comic.pageCount.toString()
         textDesc.text = comic.description
 
 
@@ -122,7 +115,7 @@ class ComicDetailsActivity : AppCompatActivity() {
 
         comic.prices.forEach {
             if (it.type == "printPrice") {
-                textPrice.text = it.price
+                textPrice.text = it.price.toString()
             }
         }
     }
@@ -143,7 +136,7 @@ class ComicDetailsActivity : AppCompatActivity() {
 
     private fun addComic(id: Int) {
         val comic = findComic(id)
-        if(comic == null){
+        if (comic == null) {
             val newComic = Comic(idApi = id)
             viewModel.addComic(newComic)
         }
@@ -151,16 +144,16 @@ class ComicDetailsActivity : AppCompatActivity() {
 
     private fun deleteComic(id: Int) {
         val comic = findComic(id)
-        if(comic != null){
+        if (comic != null) {
             viewModel.delete(comic)
         }
     }
 
-    private fun findComic(id: Int) : Comic? {
-        var comic : Comic? = null
-        viewModel.comicsLiveData.observe(this){
+    private fun findComic(id: Int): Comic? {
+        var comic: Comic? = null
+        viewModel.comicsLiveData.observe(this) {
             it.forEach { cc ->
-                if(cc.idApi == id){
+                if (cc.idApi == id) {
                     comic = cc
                 }
             }

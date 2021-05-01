@@ -7,12 +7,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelhq.R
+import com.example.marvelhq.database.Comic
 import com.example.marvelhq.model.Result
 import com.squareup.picasso.Picasso
 
-class FavoriteComicsAdapter(private val listFavComics: List<Result>, val callback: (Result) -> Unit) :
+class FavoriteComicsAdapter(val callback: (Result) -> Unit) :
     RecyclerView.Adapter<FavoriteComicsAdapter.FavComicsViewHolder>() {
 
+    private val listFavComics =  mutableListOf<Result>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteComicsAdapter.FavComicsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.comic_item, parent, false)
@@ -26,11 +28,17 @@ class FavoriteComicsAdapter(private val listFavComics: List<Result>, val callbac
         val comic = listFavComics.elementAt(position)
         val imageURL = comic.thumbnail.path + ".jpg"
         Picasso.get().load(imageURL).into(holder.image)
-        holder.numberComic.text = comic.issueNumber
+        holder.numberComic.text = comic.issueNumber.toString()
+
 
         holder.itemView.setOnClickListener {
             callback(comic)
         }
+    }
+
+    fun addFavComics(comics: List<Result>){
+        listFavComics.addAll(comics)
+        notifyDataSetChanged()
     }
 
     inner class FavComicsViewHolder(view : View) : RecyclerView.ViewHolder(view){

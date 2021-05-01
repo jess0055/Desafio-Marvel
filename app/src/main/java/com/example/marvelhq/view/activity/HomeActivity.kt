@@ -40,7 +40,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
 
-        configRecycler()
+        initRecycler()
 
         configLoading()
 
@@ -74,7 +74,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun configRecycler() {
+    private fun initRecycler() {
         adapter = HomeAdapter { comic ->
             navigateToComicDetails(comic)
         }

@@ -27,7 +27,7 @@ RecyclerView.Adapter<HomeAdapter.ComicsViewHolder>(){
         val comic = comicList.elementAt(position)
         val imageURL = comic.thumbnail.path + ".jpg"
         Picasso.get().load(imageURL).into(holder.image)
-        holder.numberComic.append(comic.issueNumber)
+        holder.numberComic.text = comic.issueNumber.toString()
 
         holder.itemView.setOnClickListener {
             callback(comic)

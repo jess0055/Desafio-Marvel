@@ -12,10 +12,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.example.marvelhq.R
+import com.example.marvelhq.database.Comic
 import com.example.marvelhq.database.ComicsDatabase
 import com.example.marvelhq.model.Result
 import com.example.marvelhq.view.adapter.FavoriteComicsAdapter
-import com.example.marvelhq.viewModel.ComicDetailsViewModel
+import com.example.marvelhq.view.adapter.HomeAdapter
 import com.example.marvelhq.viewModel.FavoriteViewModel
 import java.io.Serializable
 
@@ -31,7 +32,9 @@ class FavoriteComicsActivity : AppCompatActivity() {
 
     private val viewModel by lazy { ViewModelProvider(this).get(FavoriteViewModel::class.java) }
     private val recycler by lazy { findViewById<RecyclerView>(R.id.recycler_fav)}
-    lateinit var progressBar : ProgressBar
+    private val progressBar by lazy { findViewById<ProgressBar>(R.id.loading_favs) }
+    lateinit var adapter: FavoriteComicsAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,13 +49,27 @@ class FavoriteComicsActivity : AppCompatActivity() {
     }
 
     private fun initRecycler() {
-        viewModel.favComicsLiveData.observe(this) { comicList ->
-            val adapter = FavoriteComicsAdapter(comicList){ comic->
-                navigateToComicDetails(comic)
-            }
-            recycler.adapter = adapter
-            val layoutManager = GridLayoutManager(this, 3)
-            recycler.layoutManager = layoutManager
+//        viewModel.favComicsLiveData.observe(this) { comicList ->
+//            val adapter = FavoriteComicsAdapter(comicList){ comic->
+//                navigateToComicDetails(comic)
+//            }
+//            recycler.adapter = adapter
+//            val layoutManager = GridLayoutManager(this, 3)
+//            recycler.layoutManager = layoutManager
+//        }
+
+
+        adapter = FavoriteComicsAdapter(){ comic->
+            navigateToComicDetails(comic)
+        }
+
+        recycler.adapter = adapter
+        val layoutManager = GridLayoutManager(this, 3)
+        recycler.layoutManager = layoutManager
+
+
+        viewModel.favComicsLiveData.observe(this) { comics ->
+            adapter.addFavComics(comics)
         }
     }
 
@@ -71,7 +88,6 @@ class FavoriteComicsActivity : AppCompatActivity() {
     }
 
     private fun showProgressBar() {
-        progressBar = findViewById(R.id.loading_favs)
 
         viewModel.loading.observe(this) {
             if (it) {
